@@ -1,4 +1,7 @@
 # kaggle-feedback-prize-effectiveness, Tom's part of the 2nd place solution
+
+(original github repo : https://github.com/tikutikutiku/kaggle-feedback-prize-effectiveness)
+
 This is the training code of Tom's part of the 2nd place solution for the Kaggle competition, Feedback Prize - Predicting Effective Arguments.
 
 Team's solution summary : https://www.kaggle.com/competitions/feedback-prize-effectiveness/discussion/347359  
