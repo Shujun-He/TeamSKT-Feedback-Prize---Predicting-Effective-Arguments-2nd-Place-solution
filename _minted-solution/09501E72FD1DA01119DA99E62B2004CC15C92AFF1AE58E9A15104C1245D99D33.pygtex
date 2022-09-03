@@ -1,0 +1,90 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}]
+\PYGZbs{}\PYG{n}{small}
+\PYG{k}{def} \PYG{n+nf}{get\PYGZus{}xgb\PYGZus{}features}\PYG{p}{(}\PYG{n}{train\PYGZus{}df}\PYG{p}{,}\PYG{n}{prob\PYGZus{}sequences}\PYG{p}{):}
+    \PYG{n}{features2calculate}\PYG{o}{=}\PYG{p}{[}\PYG{n}{f}\PYG{l+s+s2}{\PYGZdq{}instability\PYGZus{}\PYGZob{}i\PYGZcb{}\PYGZdq{}} \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{)]}\PYG{o}{+}\PYGZbs{}
+    \PYG{p}{[}\PYG{n}{f}\PYG{l+s+s2}{\PYGZdq{}begin\PYGZus{}\PYGZob{}i\PYGZcb{}\PYGZdq{}} \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{)]}\PYG{o}{+}\PYGZbs{}
+    \PYG{p}{[}\PYG{n}{f}\PYG{l+s+s2}{\PYGZdq{}end\PYGZus{}\PYGZob{}i\PYGZcb{}\PYGZdq{}} \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{)]}\PYG{c+c1}{\PYGZsh{}+\PYGZbs{}}
+    \PYG{c+c1}{\PYGZsh{}[\PYGZdq{}entropy\PYGZdq{}]}
+
+    \PYG{n}{calculated\PYGZus{}features}\PYG{o}{=}\PYG{p}{[]}
+    \PYG{k}{for} \PYG{n}{i}\PYG{p}{,}\PYG{n}{prob\PYGZus{}seq} \PYG{o+ow}{in} \PYG{n}{tqdm}\PYG{p}{(}\PYG{n+nb}{enumerate}\PYG{p}{(}\PYG{n}{prob\PYGZus{}sequences}\PYG{p}{)):}
+
+        \PYG{n}{tmp}\PYG{o}{=}\PYG{p}{[]}
+        \PYG{c+c1}{\PYGZsh{}quants = np.linspace(0,1,n\PYGZus{}quan)}
+        \PYG{n}{prob\PYGZus{}seq}\PYG{o}{=}\PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{prob\PYGZus{}seq}\PYG{p}{)}
+        \PYG{n}{instability} \PYG{o}{=} \PYG{p}{[]}
+        \PYG{c+c1}{\PYGZsh{}all\PYGZus{}quants=[]}
+        \PYG{n}{tmp}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{diff}\PYG{p}{(}\PYG{n}{prob\PYGZus{}seq}\PYG{p}{[:,:],}\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{))}
+        \PYG{n}{tmp}\PYG{o}{.}\PYG{n}{append}\PYG{p}{([(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{diff}\PYG{p}{(}\PYG{n}{prob\PYGZus{}seq}\PYG{p}{[:,[}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{]]}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{))}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{()])}
+
+        \PYG{n}{tmp}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{prob\PYGZus{}seq}\PYG{p}{[:}\PYG{l+m+mi}{5}\PYG{p}{,:]}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{))}
+        \PYG{n}{tmp}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{prob\PYGZus{}seq}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{5}\PYG{p}{:,:]}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{))}
+
+        \PYG{n}{calculated\PYGZus{}features}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{concatenate}\PYG{p}{(}\PYG{n}{tmp}\PYG{p}{))}
+
+
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{n}{features2calculate}\PYG{p}{]}\PYG{o}{=}\PYG{n}{calculated\PYGZus{}features}
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}len\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{p}{[}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{s}\PYG{p}{)} \PYG{k}{for} \PYG{n}{s} \PYG{o+ow}{in} \PYG{n}{prob\PYGZus{}sequences}\PYG{p}{]}
+
+    \PYG{n}{calculated\PYGZus{}features}\PYG{o}{=}\PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{calculated\PYGZus{}features}\PYG{p}{)}
+    \PYG{n}{calculated\PYGZus{}features}\PYG{o}{.}\PYG{n}{shape}
+
+    \PYG{n}{p\PYGZus{}features}\PYG{o}{=}\PYG{p}{[]}
+    \PYG{n}{n\PYGZus{}features}\PYG{o}{=}\PYG{p}{[]}
+    \PYG{n}{neighbor\PYGZus{}features}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}Ineffective\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Adequate\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Effective\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}discourse\PYGZus{}type\PYGZsq{}}\PYG{p}{]}
+    \PYG{n}{neighbor\PYGZus{}features\PYGZus{}values}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{n}{neighbor\PYGZus{}features}\PYG{p}{]}\PYG{o}{.}\PYG{n}{values}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n}{tqdm}\PYG{p}{(}\PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{train\PYGZus{}df}\PYG{p}{))):}
+        \PYG{k}{if} \PYG{n}{i}\PYG{o}{\PYGZgt{}}\PYG{l+m+mi}{1} \PYG{o+ow}{and} \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{iloc}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{o}{==}\PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{iloc}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]:}
+            \PYG{n}{p\PYGZus{}features}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{neighbor\PYGZus{}features\PYGZus{}values}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{])}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{n}{p\PYGZus{}features}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{neighbor\PYGZus{}features\PYGZus{}values}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}
+
+        \PYG{k}{if} \PYG{n}{i}\PYG{o}{\PYGZlt{}}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{train\PYGZus{}df}\PYG{p}{)}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)} \PYG{o+ow}{and} \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{iloc}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{o}{==}\PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{iloc}\PYG{p}{[}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{]:}
+            \PYG{n}{n\PYGZus{}features}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{neighbor\PYGZus{}features\PYGZus{}values}\PYG{p}{[}\PYG{n}{i}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{p}{])}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{n}{n\PYGZus{}features}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{neighbor\PYGZus{}features\PYGZus{}values}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}
+
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[[}\PYG{n}{f}\PYG{o}{+}\PYG{l+s+s2}{\PYGZdq{}\PYGZus{}previous\PYGZdq{}} \PYG{k}{for} \PYG{n}{f} \PYG{o+ow}{in} \PYG{n}{neighbor\PYGZus{}features}\PYG{p}{]]}\PYG{o}{=}\PYG{n}{p\PYGZus{}features}
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[[}\PYG{n}{f}\PYG{o}{+}\PYG{l+s+s2}{\PYGZdq{}\PYGZus{}next\PYGZdq{}} \PYG{k}{for} \PYG{n}{f} \PYG{o+ow}{in} \PYG{n}{neighbor\PYGZus{}features}\PYG{p}{]]}\PYG{o}{=}\PYG{n}{n\PYGZus{}features}
+
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}mean\PYGZus{}Ineffective\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}essay\PYGZus{}id\PYGZdq{}}\PYG{p}{)[}\PYG{l+s+s2}{\PYGZdq{}Ineffective\PYGZdq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}mean\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}mean\PYGZus{}Adequate\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}essay\PYGZus{}id\PYGZdq{}}\PYG{p}{)[}\PYG{l+s+s2}{\PYGZdq{}Adequate\PYGZdq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}mean\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}mean\PYGZus{}Effective\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}essay\PYGZus{}id\PYGZdq{}}\PYG{p}{)[}\PYG{l+s+s2}{\PYGZdq{}Effective\PYGZdq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}mean\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}std\PYGZus{}Ineffective\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}essay\PYGZus{}id\PYGZdq{}}\PYG{p}{)[}\PYG{l+s+s2}{\PYGZdq{}Ineffective\PYGZdq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}std\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}std\PYGZus{}Adequate\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}essay\PYGZus{}id\PYGZdq{}}\PYG{p}{)[}\PYG{l+s+s2}{\PYGZdq{}Adequate\PYGZdq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}std\PYGZdq{}}\PYG{p}{)}
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}std\PYGZus{}Effective\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}essay\PYGZus{}id\PYGZdq{}}\PYG{p}{)[}\PYG{l+s+s2}{\PYGZdq{}Effective\PYGZdq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}std\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}discourse\PYGZus{}count\PYGZsq{}}\PYG{p}{]}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}essay\PYGZus{}id\PYGZdq{}}\PYG{p}{)[}\PYG{l+s+s1}{\PYGZsq{}discourse\PYGZus{}type\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}count\PYGZdq{}}\PYG{p}{)}
+
+    \PYG{n}{cnts}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{groupby}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{)[}\PYG{l+s+s1}{\PYGZsq{}discourse\PYGZus{}type\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{apply}\PYG{p}{(}\PYG{k}{lambda} \PYG{n}{x}\PYG{p}{:} \PYG{n}{x}\PYG{o}{.}\PYG{n}{value\PYGZus{}counts}\PYG{p}{())}
+
+    \PYG{c+c1}{\PYGZsh{}new\PYGZus{}df=[]}
+    \PYG{n}{discourse\PYGZus{}types}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}Claim\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Evidence\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Concluding Statement\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Lead\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Position\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Counterclaim\PYGZsq{}}\PYG{p}{,}\PYG{l+s+s1}{\PYGZsq{}Rebuttal\PYGZsq{}}\PYG{p}{]}
+    \PYG{n}{value\PYGZus{}count\PYGZus{}hash}\PYG{o}{=}\PYG{p}{\PYGZob{}\PYGZcb{}}
+    \PYG{k}{for} \PYG{n}{t} \PYG{o+ow}{in} \PYG{n}{discourse\PYGZus{}types}\PYG{p}{:}
+        \PYG{n}{value\PYGZus{}count\PYGZus{}hash}\PYG{p}{[}\PYG{n}{t}\PYG{p}{]}\PYG{o}{=}\PYG{p}{\PYGZob{}\PYGZcb{}}
+    \PYG{k}{for} \PYG{n}{key} \PYG{o+ow}{in} \PYG{n}{cnts}\PYG{o}{.}\PYG{n}{keys}\PYG{p}{():}
+        \PYG{n}{value\PYGZus{}count\PYGZus{}hash}\PYG{p}{[}\PYG{n}{key}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]][}\PYG{n}{key}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]]}\PYG{o}{=}\PYG{n}{cnts}\PYG{p}{[}\PYG{n}{key}\PYG{p}{]}
+
+    \PYG{n}{discourse\PYGZus{}cnts}\PYG{o}{=}\PYG{p}{[]}
+    \PYG{k}{for} \PYG{n}{essay\PYGZus{}id} \PYG{o+ow}{in} \PYG{n}{train\PYGZus{}df}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{]}\PYG{o}{.}\PYG{n}{unique}\PYG{p}{():}
+        \PYG{n}{row}\PYG{o}{=}\PYG{p}{[}\PYG{n}{essay\PYGZus{}id}\PYG{p}{]}
+        \PYG{k}{for} \PYG{n}{d} \PYG{o+ow}{in} \PYG{n}{discourse\PYGZus{}types}\PYG{p}{:}
+            \PYG{k}{try}\PYG{p}{:}
+                \PYG{n}{row}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{value\PYGZus{}count\PYGZus{}hash}\PYG{p}{[}\PYG{n}{d}\PYG{p}{][}\PYG{n}{essay\PYGZus{}id}\PYG{p}{])}
+            \PYG{k}{except}\PYG{p}{:}
+                \PYG{n}{row}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{)}
+        \PYG{n}{discourse\PYGZus{}cnts}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{row}\PYG{p}{)}
+
+    \PYG{n}{discourse\PYGZus{}cnts}\PYG{o}{=}\PYG{n}{pd}\PYG{o}{.}\PYG{n}{DataFrame}\PYG{p}{(}\PYG{n}{discourse\PYGZus{}cnts}\PYG{p}{,}\PYG{n}{columns}\PYG{o}{=}\PYG{p}{[}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{]}\PYG{o}{+}\PYG{p}{[}\PYG{n}{f}\PYG{l+s+s1}{\PYGZsq{}\PYGZob{}d\PYGZcb{}\PYGZus{}count\PYGZsq{}} \PYG{k}{for} \PYG{n}{d} \PYG{o+ow}{in} \PYG{n}{discourse\PYGZus{}types}\PYG{p}{])}
+    \PYG{c+c1}{\PYGZsh{}discourse\PYGZus{}cnts}
+
+    \PYG{n}{train\PYGZus{}df}\PYG{o}{=}\PYG{n}{train\PYGZus{}df}\PYG{o}{.}\PYG{n}{merge}\PYG{p}{(}\PYG{n}{discourse\PYGZus{}cnts}\PYG{p}{,}\PYG{n}{how}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}left\PYGZsq{}}\PYG{p}{,}\PYG{n}{on}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}essay\PYGZus{}id\PYGZsq{}}\PYG{p}{)}
+    \PYG{n}{train\PYGZus{}df}
+
+    \PYG{c+c1}{\PYGZsh{}train\PYGZus{}df}
+
+    \PYG{k}{return} \PYG{n}{train\PYGZus{}df}
+
+\end{Verbatim}
